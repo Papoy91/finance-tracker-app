@@ -3,12 +3,20 @@ from datetime import date
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import streamlit as st
+from google.oauth2 import service_account
+
+creds_dict = st.secrets["google_cloud"]
+credentials = service_account.Credentials.from_service_account_info(dict(creds_dict))
 
 # Connect to Google Sheet
+@st.cache_resource
 def connect_sheet():
-    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-    creds = ServiceAccountCredentials.from_json_keyfile_name("personal_gcp_creds.json", scope)
-    client = gspread.authorize(creds)
+    scoped_credentials = credentials.with_scopes([
+        "https://spreadsheets.google.com/feeds",
+        "https://www.googleapis.com/auth/drive"
+    ])
+    client = gspread.authorize(scoped_credentials)
     sheet = client.open("finance_tracker").worksheet("data")
     return sheet
 
