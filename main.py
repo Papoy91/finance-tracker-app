@@ -6,6 +6,11 @@ from oauth2client.service_account import ServiceAccountCredentials
 import streamlit as st
 from google.oauth2 import service_account
 
+if "google_cloud" in st.secrets:
+    creds_dict = st.secrets["google_cloud"]
+else:
+    st.error("❌ Google Cloud credentials not found in secrets.")
+
 creds_dict = st.secrets["google_cloud"]
 credentials = service_account.Credentials.from_service_account_info(dict(creds_dict))
 
